@@ -40,7 +40,27 @@ def run_agent():
     # 3. FETCH DATA
     # Note: Replace this with your actual Scraper API call (e.g., Apify or RapidAPI)
     # This is a conceptual fetch loop
-    listings = fetch_listings_from_api(os.environ['API_KEY']) 
+    # listings = fetch_listings_from_api(os.environ['API_KEY']) 
+    
+    def fetch_listings_from_api(api_key):
+    # Your specific StreetEasy search URL (Filtered for Manhattan 2BR/J4)
+    search_url = "https://streeteasy.com/for-sale/manhattan/status:open%7Cbeds%3A2"
+    
+    apify_url = f"https://api.apify.com/v2/acts/jupri~streeteasy-scraper/run-sync-get-dataset-items?token={api_key}"
+    
+    payload = {
+        "search_url": search_url,
+        "max_items": 20, # Checks the 20 most recent daily
+        "proxy_configuration": {"useApifyProxy": True}
+    }
+    
+    try:
+        response = requests.post(apify_url, json=payload, timeout=120)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        print(f"Error fetching from Apify: {e}")
+        return []
     
     new_rows = []
     for apt in listings:
