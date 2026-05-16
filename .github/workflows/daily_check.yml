@@ -2,18 +2,19 @@ name: Daily Apartment Check
 
 on:
   schedule:
-    - cron: '0 12 * * *' # Runs at 12:00 UTC (8:00 AM EST)
-  workflow_dispatch: # Allows you to run it manually for testing
+    - cron: '0 12 * * *'  # Runs at 12:00 UTC (8:00 AM EST)
+  workflow_dispatch:       # Allows manual trigger for testing
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4   # upgraded from v3
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5  # upgraded from v4
         with:
           python-version: '3.9'
 
@@ -24,4 +25,4 @@ jobs:
         env:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
           API_KEY: ${{ secrets.REAL_ESTATE_API_KEY }}
-        run: python apartment_agent.py
+        run: python .github/workflows/apartment_agent.py  # fixed path
